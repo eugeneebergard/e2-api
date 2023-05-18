@@ -1,12 +1,12 @@
 require('dotenv').config();
 
-const mongoose = require('mongoose');
 const express = require('express');
+const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const helmet = require('helmet');
 const { Joi, celebrate, errors } = require('celebrate');
 
-const { usersRouter, articlesRouter } = require('./routes/index.js');
+const { usersRouter, articlesRouter } = require('./routes');
 
 const auth = require('./middlewares/auth');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
@@ -44,7 +44,7 @@ app.post('/signup', celebrate({
     }),
   }),
   rateLimiterUsingThirdParty,
-  createUser,
+  createUser
 );
 
 app.post('/signin', celebrate({
@@ -54,7 +54,7 @@ app.post('/signin', celebrate({
     }),
   }),
   rateLimiterUsingThirdParty,
-  login,
+  login
 );
 
 app.use('/users', auth, rateLimiterUsingThirdParty, usersRouter);
@@ -65,7 +65,7 @@ app.use((req, res, next) => {
 });
 
 app.use(errorLogger);
-app.use(errors);
+app.use(errors());
 app.use(serverError);
 
 app.listen(PORT, () => {
