@@ -7,7 +7,7 @@ const Conflict = require('../errors/conflict');
 const NotFound = require('../errors/notFound');
 const Unauthorized = require('../errors/unauthorized');
 const user = require('../models/user');
-const { key } = require('../config/secretKey');
+const { key } = require('../config');
 
 module.exports.getMe = (req, res, next) => {
   user
