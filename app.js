@@ -22,7 +22,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 void mongoose.connect(url, mongooseOptions);
 
 app.use(requestLogger);
-app.use('/', routes);
+app.use(routes);
 app.use(errorLogger);
 app.use(errors());
 app.use(serverError);
