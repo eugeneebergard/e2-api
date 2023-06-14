@@ -12,7 +12,7 @@ const usersSchema = new mongoose.Schema({
     required: true,
     unique: true,
     validate: {
-      validator: (v) => validator.isEmail(v),
+      validator: v => validator.isEmail(v),
       message: 'Некорректный адрес электронной почты',
     },
   },
@@ -33,11 +33,11 @@ const usersSchema = new mongoose.Schema({
 usersSchema.statics.findUserByCredentials = function (email, password) {
   return this.findOne({ email })
     .select('+password')
-    .then((user) => {
+    .then(user => {
       if (!user) {
         return Promise.reject(new Unauthorized('Неправильные почта или пароль'));
       }
-      return bcrypt.compare(password, user.password).then((matched) => {
+      return bcrypt.compare(password, user.password).then(matched => {
         if (!matched) {
           return Promise.reject(new Unauthorized('Неправильные почта или пароль'));
         }

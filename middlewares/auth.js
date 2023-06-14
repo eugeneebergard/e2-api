@@ -4,7 +4,7 @@ const Unauthorized = require('../errors/unauthorized');
 
 const { key } = require('../config/secretKey');
 
-const extractBearerToken = (header) => header.replace('Bearer ', '');
+const extractBearerToken = header => header.replace('Bearer ', '');
 
 module.exports = (req, res, next) => {
   const { authorization } = req.headers;

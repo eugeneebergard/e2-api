@@ -8,26 +8,17 @@ const NotFound = require('../errors/notFound');
 module.exports.getArticles = (req, res, next) => {
   article
     .find({ owner: req.user._id })
-    .then((articles) => res.send({ data: articles }))
-    .catch(next);
+    .then(articles => res.send({ data: articles }))
+    .catch(err => next(err));
 };
 
 module.exports.createArticle = (req, res, next) => {
-  const {
-    keyword, title, text, date, source, link, image,
-  } = req.body;
+  const { keyword, title, text, date, source, link, image } = req.body;
 
   article
     .create({ keyword, title, text, date, source, link, image, owner: req.user._id })
-    .then((articles) => res.send({ data: articles }))
-    .catch((err) => {
-      if (err.name === 'ValidationError') {
-        throw new BadRequest('Некорректная ссылка');
-      } else {
-        next(err);
-      }
-    })
-    .catch(next);
+    .then(newArticle => res.send({ data: newArticle }))
+    .catch(err => next(err));
 };
 
 module.exports.deleteArticle = (req, res, next) => {
@@ -38,14 +29,11 @@ module.exports.deleteArticle = (req, res, next) => {
   return article
     .findById(req.params.articleId)
     .orFail(new NotFound('Статья не найдена'))
-    .then((foundArticle) => {
+    .then(foundArticle => {
       if (foundArticle.owner.toString() !== req.user._id) {
         throw new Forbidden('Вы не являетесь обладателем статьи');
       }
-      return article
-        .deleteOne(foundArticle)
-        .then(() => res.send({ message: 'Статья удалена' }))
-        .catch(next);
+      return article.deleteOne(foundArticle).then(() => res.send({ message: 'Статья удалена' }));
     })
-    .catch(next);
+    .catch(err => next(err));
 };
