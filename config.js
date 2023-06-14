@@ -13,5 +13,5 @@ module.exports = {
   corsOptions: {
     origin: ['http://localhost:8080'],
     credentials: true,
-  }
-}
+  },
+};
