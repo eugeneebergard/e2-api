@@ -26,7 +26,7 @@ const articlesSchema = new mongoose.Schema({
     type: String,
     required: true,
     validate: {
-      validator: v => validator.isURL(v),
+      validator: value => validator.isURL(value, { protocols: ['http', 'https'], require_protocol: true }),
       message: 'Некорректный адрес ссылки',
     },
   },
@@ -34,7 +34,7 @@ const articlesSchema = new mongoose.Schema({
     type: String,
     required: true,
     validate: {
-      validator: v => validator.isURL(v),
+      validator: value => validator.isURL(value, { protocols: ['http', 'https'], require_protocol: true }),
       message: 'Некорректный адрес картинки',
     },
   },
@@ -44,5 +44,11 @@ const articlesSchema = new mongoose.Schema({
     required: true,
   },
 });
+
+articlesSchema.methods.hideOwner = function() {
+  const obj = this.toObject();
+  delete obj.owner;
+  return obj;
+};
 
 module.exports = mongoose.model('article', articlesSchema);
