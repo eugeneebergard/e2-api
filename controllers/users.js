@@ -12,8 +12,41 @@ const { key } = require('../config');
 module.exports.getMe = (req, res, next) => {
   user
     .findById(req.user._id)
-    .then(users => res.send({ email: users.email, name: users.name }))
+    .then(foundUser => {
+      return res.send({ email: foundUser.email, name: foundUser.name });
+    })
     .catch(err => next(err));
+};
+
+module.exports.updateMe = async (req, res, next) => {
+  const { email, password, name } = req.body;
+
+  return bcrypt
+    .hash(password, 10)
+    .then(hash => {
+      return user.findByIdAndUpdate(
+        req.user._id,
+        { email, password: hash, name },
+        { new: true, runValidators: true, context: 'query' }
+      );
+    })
+    .then(updatedUser =>
+      res.send({
+        data: {
+          email: updatedUser.email,
+          name: updatedUser.name,
+        },
+      })
+    )
+    .catch(err => {
+      if (err.name === 'ValidationError') {
+        if (err.errors.email && err.errors.email.kind === 'unique') {
+          next(new Conflict('Пользователь с таким E-mail уже существует'));
+        } else {
+          next(err);
+        }
+      }
+    });
 };
 
 module.exports.createUser = (req, res, next) => {
@@ -26,11 +59,11 @@ module.exports.createUser = (req, res, next) => {
   return bcrypt
     .hash(password, 10)
     .then(hash => user.create({ email, password: hash, name }))
-    .then(users =>
+    .then(newUser =>
       res.send({
         data: {
-          email: users.email,
-          name: users.name,
+          email: newUser.email,
+          name: newUser.name,
         },
       })
     )

@@ -10,7 +10,7 @@ const { errors } = require('celebrate');
 const { url, port, mongooseOptions, corsOptions } = require('./config');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
 const { serverError } = require('./errors/serverError');
-const routes = require('./routes/index');
+const routes = require('./routes');
 
 const app = express();
 

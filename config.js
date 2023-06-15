@@ -11,7 +11,7 @@ module.exports = {
     useUnifiedTopology: true,
   },
   corsOptions: {
-    origin: ['http://localhost:8080'],
+    origin: NODE_ENV === 'production' ? [] : ['http://localhost:8080'],
     credentials: true,
   },
 };
