@@ -37,6 +37,9 @@ $ npm run dev
 # возвращает информацию о пользователе (email и имя)
 GET /users/me
 
+# редактирует информацию о пользователе и возвращает новые данные
+PUT /users/me
+
 # возвращает все сохранённые пользователем статьи
 GET /articles
 
@@ -45,7 +48,7 @@ GET /articles
 POST /articles
 
 # удаляет сохранённую статью  по _id
-DELETE /articles/articleId
+DELETE /articles/:articleId
 
 # создаёт пользователя с переданными в теле
 # email, password и name
@@ -54,6 +57,9 @@ POST /signup
 # проверяет переданные в теле почту и пароль
 # и возвращает JWT
 POST /signin
+
+# чистит jwt cookie клиента
+POST /logout
 ```
 
 ## Logs
