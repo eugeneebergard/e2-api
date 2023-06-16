@@ -101,7 +101,17 @@ module.exports.login = async (req, res, next) => {
     .findUserByCredentials(email, password)
     .then(userObj => {
       const token = jwt.sign({ _id: userObj._id }, key, { expiresIn: '7d' });
-      res.send({ token });
+      res.cookie('jwt', token, {
+        maxAge: 1000 * 60 * 60 * 24 * 7,
+        httpOnly: true,
+        sameSite: true,
+      });
+      res.send({ message: 'Success' });
     })
     .catch(err => next(err));
+};
+
+module.exports.logout = async (req, res) => {
+  res.clearCookie('jwt');
+  res.send({ message: 'Success' })
 };
