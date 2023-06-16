@@ -3,71 +3,32 @@ require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
+const cookieParser = require('cookie-parser');
 const helmet = require('helmet');
-const { Joi, celebrate, errors } = require('celebrate');
+const cors = require('cors');
+const { errors } = require('celebrate');
 
-const { usersRouter, articlesRouter } = require('./routes');
-
-const auth = require('./middlewares/auth');
+const { url, port, mongooseOptions, corsOptions } = require('./config');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
-const rateLimiterUsingThirdParty = require('./middlewares/rateLimit');
-
-const { login, createUser } = require('./controllers/users');
-
-const NotFound = require('./errors/notFound');
 const { serverError } = require('./errors/serverError');
-
-const { url } = require('./config/mongoUrl');
-
-const { PORT = 3000 } = process.env;
+const routes = require('./routes');
 
 const app = express();
 
+app.use(cors(corsOptions));
 app.use(helmet());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(cookieParser());
 
-void mongoose.connect(url, {
-  useNewUrlParser: true,
-  useCreateIndex: true,
-  useFindAndModify: false,
-  useUnifiedTopology: true,
-});
+void mongoose.connect(url, mongooseOptions);
 
 app.use(requestLogger);
-
-app.post('/signup', celebrate({
-    body: Joi.object().keys({
-      email: Joi.string().required().email(),
-      password: Joi.string().required().min(8),
-      name: Joi.string().required().min(2).max(30),
-    }),
-  }),
-  rateLimiterUsingThirdParty,
-  createUser
-);
-
-app.post('/signin', celebrate({
-    body: Joi.object().keys({
-      email: Joi.string().required().email(),
-      password: Joi.string().required().min(8),
-    }),
-  }),
-  rateLimiterUsingThirdParty,
-  login
-);
-
-app.use('/users', auth, rateLimiterUsingThirdParty, usersRouter);
-app.use('/articles', auth, rateLimiterUsingThirdParty, articlesRouter);
-
-app.use((req, res, next) => {
-  next(new NotFound('Не найдено'));
-});
-
+app.use(routes);
 app.use(errorLogger);
 app.use(errors());
 app.use(serverError);
 
-app.listen(PORT, () => {
-  console.log(`Ссылка на сервер: localhost:${PORT}`);
+app.listen(port, () => {
+  console.log(`Ссылка на сервер: localhost:${port}`);
 });
