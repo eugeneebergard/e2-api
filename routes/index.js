@@ -1,7 +1,7 @@
 const router = require('express').Router();
 const { celebrate, Joi } = require('celebrate');
 
-const { createUser, login, logout } = require('../controllers/users');
+const { createUser, checkUser, login, logout } = require('../controllers/users');
 
 const auth = require('../middlewares/auth');
 const rateLimiterUsingThirdParty = require('../middlewares/rateLimit');
@@ -43,6 +43,7 @@ router.post(
 );
 
 router.post('/logout', logout);
+router.get('/check-user', checkUser);
 
 router.use('/users', auth, rateLimiterUsingThirdParty, usersRouter);
 router.use('/articles', auth, rateLimiterUsingThirdParty, articlesRouter);

@@ -90,6 +90,20 @@ module.exports.getUser = async (req, res, next) => {
     .catch(err => next(err));
 };
 
+module.exports.checkUser = async (req, res) => {
+  const token = req.cookies.jwt;
+
+  if (!token) return res.send({ userIsAuth: false })
+
+  try {
+    jwt.verify(token, key);
+    res.send({ userIsAuth: true })
+  } catch (err) {
+    res.send({ userIsAuth: false })
+  }
+}
+
+
 module.exports.login = async (req, res, next) => {
   const { email, password } = req.body;
 
