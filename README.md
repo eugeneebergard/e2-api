@@ -101,8 +101,8 @@ const payload = {
 }
 const response = {
     user: {
-    email: '' as string,
-    name: '' as string
+        email: '' as string,
+        name: '' as string
     }
 }
 ```
