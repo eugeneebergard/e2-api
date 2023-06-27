@@ -31,45 +31,101 @@ $ npm run dev
 - **image** — ссылка на иллюстрацию к статье. Обязательное поле-строка. URL-адрес.
 - **owner** — \_id пользователя, сохранившего статью. База данных не возвращает это поле.
 
-## Routers and Controllers
+## Routes and Controllers
 
+- `GET /users/me` Возвращает информацию о пользователе. **Требуется авторизация**
+```typescript
+const response = { 
+    user: { 
+        email: '' as string,
+        name: '' as string
+    }
+}
 ```
-# возвращает информацию о пользователе (email и имя)
-# требуется авторизация
-GET /users/me
 
-# редактирует информацию о пользователе и возвращает новые данные
-# требуется авторизация
-PUT /users/me
+- `PUT /users/me` Редактирует информацию о пользователе и возвращает новые данные. **Требуется авторизация**
+```typescript
+const payload = {
+    email: '' as string,
+    name: '' as string,
+    password: '' as string | undefined
+}
 
-# возвращает все сохранённые пользователем статьи
-# требуется авторизация
-GET /articles
-
-# создаёт статью с переданными в теле
-# keyword, title, text, date, source, link и image
-# требуется авторизация
-POST /articles
-
-# удаляет сохранённую статью  по _id
-# требуется авторизация
-DELETE /articles/:articleId
-
-# создаёт пользователя с переданными в теле
-# email, password и name
-POST /signup
-
-# проверяет переданные в теле почту и пароль
-# и возвращает JWT
-POST /signin
-
-# чистит jwt cookie клиента
-POST /logout
-
-# проверяет авторизован ли пользователь и возвращает
-# true или false
-GET /check-user
+const response = { 
+    user: { 
+        email: '' as string,
+        name: '' as string
+    }
+}
 ```
+
+- `GET /articles` Возвращает все сохранённые пользователем статьи. **Требуется авторизация**
+```typescript
+const response = { 
+    articles: [{
+        keyword: '' as string,
+        title: '' as string,
+        text: '' as string,
+        date: '' as string,
+        source: '' as string,
+        link: '' as string,
+        image: '' as string
+    }]
+}
+```
+
+- `POST /articles` Сохраняет статью в профиль пользователя. **Требуется авторизация**
+```typescript
+const payload = {
+    keyword: '' as string,
+    title: '' as string,
+    text: '' as string,
+    date: '' as string,
+    source: '' as string,
+    link: '' as string,
+    image: '' as string
+}
+```
+
+- `DELETE /articles/:articleId` Удаляет сохранённую статью по _id. **Требуется авторизация**
+```typescript
+const response = { message: '' as string }
+```
+
+- `POST /signup` Создаёт пользователя с переданными в теле `email, password, name`
+```typescript
+const payload = {
+    name: '' as string,
+    email: '' as string,
+    password: '' as string,
+}
+const response = {
+    user: {
+    email: '' as string,
+    name: '' as string
+    }
+}
+```
+
+- `POST /signin` Проверяет переданные в теле почту и пароль и возвращает JWT.
+```typescript
+const payload = {
+    email: '' as string,
+    password: '' as string,
+}
+const response = { message: '' as string }
+```
+
+- `POST /logout` Чистит jwt cookie клиента.
+```typescript
+const response = { isAuth: false as boolean }
+```
+
+- `GET /check-user` Проверяет авторизован ли пользователь.
+```typescript
+const response = { isAuth: false as boolean }
+```
+
 
 ## Logs
 
