@@ -8,7 +8,7 @@ const NotFound = require('../errors/notFound');
 module.exports.getArticles = (req, res, next) => {
   article
     .find({ owner: req.user._id })
-    .then(articles => res.send({ data: articles }))
+    .then(articles => res.send({ articles }))
     .catch(err => next(err));
 };
 
@@ -17,7 +17,7 @@ module.exports.createArticle = (req, res, next) => {
 
   article
     .create({ keyword, title, text, date, source, link, image, owner: req.user._id })
-    .then(newArticle => res.send({ data: newArticle.hideOwner() }))
+    .then(newArticle => res.send({ article: newArticle.hideOwner() }))
     .catch(err => next(err));
 };
 

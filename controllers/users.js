@@ -13,7 +13,12 @@ module.exports.getMe = (req, res, next) => {
   user
     .findById(req.user._id)
     .then(foundUser => {
-      return res.send({ email: foundUser.email, name: foundUser.name });
+      return res.send({
+        user: {
+          email: foundUser.email,
+          name: foundUser.name
+        }
+      });
     })
     .catch(err => next(err));
 };
@@ -32,10 +37,10 @@ module.exports.updateMe = async (req, res, next) => {
     })
     .then(updatedUser =>
       res.send({
-        data: {
+        user: {
           email: updatedUser.email,
-          name: updatedUser.name,
-        },
+          name: updatedUser.name
+        }
       })
     )
     .catch(err => {
@@ -61,10 +66,10 @@ module.exports.createUser = (req, res, next) => {
     .then(hash => user.create({ email, password: hash, name }))
     .then(newUser =>
       res.send({
-        data: {
+        user: {
           email: newUser.email,
           name: newUser.name,
-        },
+        }
       })
     )
     .catch(err => {
@@ -86,20 +91,20 @@ module.exports.getUser = async (req, res, next) => {
   user
     .findById(req.params.userId)
     .orFail(new NotFound('Пользователь с таким id не найден'))
-    .then(foundUser => res.send(foundUser))
+    .then(foundUser => res.send({ user: foundUser }))
     .catch(err => next(err));
 };
 
 module.exports.checkUser = async (req, res) => {
   const token = req.cookies.jwt;
 
-  if (!token) return res.send({ userIsAuth: false })
+  if (!token) return res.send({ isAuth: false })
 
   try {
     jwt.verify(token, key);
-    res.send({ userIsAuth: true })
+    res.send({ isAuth: true })
   } catch (err) {
-    res.send({ userIsAuth: false })
+    res.send({ isAuth: false })
   }
 }
 
